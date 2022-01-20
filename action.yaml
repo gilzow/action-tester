@@ -17,5 +17,7 @@ runs:
         - id: random-number-generator
           run: echo "::set-output name=random-id::$(echo $RANDOM)"
           shell: bash
-        - run: ${{ github.action_path }}/foo.sh ${{ steps.random-number-generator.outputs.random-id }}
+        - run: |
+           printf "I was handed %d and will now give it to the script.\n" "${{ steps.random-number-generator.outputs.random-id }}"
+           ${{ github.action_path }}/foo.sh ${{ steps.random-number-generator.outputs.random-id }}
           shell: bash
