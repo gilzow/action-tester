@@ -14,6 +14,10 @@ runs:
     steps:
         - run: echo Hello ${{ inputs.who-to-greet }}.
           shell: bash
+        - id: barfoo
+          shell: bash
+          run: |
+            echo "::set-output name=bar::foobar"
         - id: random-number-generator
           run: RAND="${RANDOM}"; echo "::set-output name=random-id::$(echo ${RAND})"; echo "rand=${RAND}" >> $GITHUB_ENV
           shell: bash
@@ -24,6 +28,7 @@ runs:
             echo "foo=barfoo" >> $GITHUB_ENV
         - id: hand-off-to-script
           run: |
+            printf "from the earlier step, they created the value '%s'\n" "${{ steps.barfoo.outputs.bar }}"
             printf "I was handed %d and will now give it to the script.\n" "${{ env.rand }}"
             printf "foo is %s" "${{ env.foo }}"
             ${{ github.action_path }}/foo.sh ${{ env.rand }}
