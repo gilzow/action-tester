@@ -15,16 +15,16 @@ runs:
         - run: echo Hello ${{ inputs.who-to-greet }}.
           shell: bash
         - id: random-number-generator
-          run: echo "::set-output name=random-id::$(echo $RANDOM)"
+          run: RAND="${RANDOM}"; echo "::set-output name=random-id::$(echo ${RAND})"; echo "rand=${RAND}" >> $GITHUB_ENV
           shell: bash
         - id: git-data
           shell: bash
           run: |
             printf "The repo in use is %s and is owned by %s\n" "${{ github.repository }}" "${{ github.repository_owner }}"
-            echo "::set-output name=foo::${{ github.repository }}"
+            echo "foo=barfoo" >> $GITHUB_ENV
         - id: hand-off-to-script
           run: |
-            printf "I was handed %d and will now give it to the script.\n" "${{ steps.random-number-generator.outputs.random-id }}"
-            printf "foo is %s" "${{ steps.git-data.outputs.foo }}"
-            ${{ github.action_path }}/foo.sh ${{ steps.random-number-generator.outputs.random-id }}
+            printf "I was handed %d and will now give it to the script.\n" "${{ env.rand }}"
+            printf "foo is %s" "${{ env.foo }}"
+            ${{ github.action_path }}/foo.sh ${{ env.rand }}
           shell: bash
